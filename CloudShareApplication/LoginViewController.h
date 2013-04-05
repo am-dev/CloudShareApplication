@@ -14,12 +14,14 @@
     
     IBOutlet UITextField *UsernameField;
     IBOutlet UITextField *PasswordField;
+    NSString *userid;
 }
 
 @property ( nonatomic, retain ) UITextField *UsernameField;
 @property ( nonatomic, retain ) UITextField *PasswordField;
 @property ( nonatomic, retain ) UIButton *loginbutton;
 @property ( nonatomic, retain ) UIButton *createbutton;
+@property ( nonatomic, retain ) NSString *userid;
 
 
 - ( IBAction)Log_in:(id)sender;

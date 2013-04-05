@@ -9,6 +9,9 @@
 #import "LiveFeedsViewController.h"
 #import "cellView.h"
 #import "AFNetworking.h"
+#import "SBJson.h"
+#import "LiveFeedCell.h"
+#import "SelectedFeedViewController.h"
 
 @interface LiveFeedsViewController ()
 
@@ -18,6 +21,8 @@
 
 @synthesize livefeeds = _liveFeeds;
 @synthesize activityindicator = _activityIndicator;
+@synthesize userid = _userid;
+@synthesize fileid = _fileID;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -45,10 +50,11 @@
 {
     [super viewDidLoad];
     
-    self.tableview = [[UITableView alloc] initWithFrame:CGRectMake(0.0, 0.0,
+    //NSLog(@"User id : %@", self.userid);
+    self.tableview = [[UITableView alloc] initWithFrame:CGRectMake(0.0,0.0,
                                                                    self.view.bounds.size.width,
                                                                    self.view.bounds.size.height)
-                                                  style:UITableViewStyleGrouped];
+                                                  style:UITableViewStylePlain];
     self.tableview.dataSource = self;
     self.tableview.delegate = self;
     self.tableview.autoresizingMask= UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -96,22 +102,31 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *identifier = @"cellView";
+    static NSString *identifier = @"LiveFeedCell";
+    
     NSDictionary *feeds = [self.livefeeds objectAtIndex:indexPath.row];
     
-    cellView *samplecell = ( cellView * )[tableView dequeueReusableCellWithIdentifier:identifier];
+    LiveFeedCell *samplecell = ( LiveFeedCell * )[tableView dequeueReusableCellWithIdentifier:identifier];
     
     if(samplecell == nil)
     {
         NSArray *nib = [[NSBundle mainBundle]loadNibNamed:identifier owner:self options:nil];
+        
         samplecell=[nib objectAtIndex:0];
     }
-    samplecell.FileDownloadLabel.text = [feeds objectForKey:@"username"];
-    samplecell.Filenamelabel.text = [feeds objectForKey:@"file_name"];
-    samplecell.uploaddatelabel.text = [feeds objectForKey:@"uploadDate"];
-    NSURL *url = [[NSURL alloc] initWithString:[feeds objectForKey:@"user_profileimage"]];
+    
+    samplecell.livefeedusername.text = [feeds objectForKey:@"file_type"];
+    
+    samplecell.livefeedfilename.text = [feeds objectForKey:@"username"];
+    
+    //samplecell.uploaddatelabel.text = [feeds objectForKey:@"uploadDate"];
+    NSURL *url = [[NSURL alloc] initWithString:[feeds objectForKey:@"fileURL"]];
+    
     NSData *data = [NSData dataWithContentsOfURL:url];
-    samplecell.FileDownloadImage.image = [[UIImage alloc] initWithData:data];
+    
+    samplecell.livefeedImage.image = [[UIImage alloc] initWithData:data];
+    
+    samplecell.commentfield.text = @"test";
     
     return samplecell;
 }
@@ -123,11 +138,134 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 170;
+    return 200;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSDictionary *feeds = [self.livefeeds objectAtIndex:indexPath.row];
+    
+    NSString *fileID = [feeds objectForKey:@"postid"];
+    
+    NSLog(@"file ID : %@", fileID);
+    
+    self.fileid = fileID;
+    
+    [self performSegueWithIdentifier:@"passingfileID" sender:self];
+    
+    //NSString *string = @"testing";
+    //[self postComment:string :@"2"];
 }
 
 - (IBAction)Reloadtable:(id)sender
 {    
     [self.tableview reloadData];
 }
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([segue.identifier isEqualToString:@"passingfileID"]) {
+        
+        SelectedFeedViewController *controller = segue.destinationViewController;
+        
+        controller.fileid = self.fileid;
+    }
+}
+
+-(void)postComment:(NSString *)comment :(NSString *)fileID
+{
+    
+    
+    @try {
+        //check if the text fields are empty if so error message triggered.
+        if( [comment isEqualToString:@""])
+        {
+            [self alertStatus:@"No content" :@"Please try again"];
+        }
+        else
+        {
+            //Create string to post the username and password.
+            NSString *post = [NSString stringWithFormat:@"comment=%@&fileID=%@",comment, fileID];
+            
+            NSLog(@"PostData: %@",post);
+            
+            NSURL *url = [NSURL URLWithString:@"http://andysthesis.webhop.org/Php-services/CommentOnPost.php"];
+            
+            //Convert the post string to type data, create string for length of post.
+            NSData *postData = [post dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES];
+            
+            NSString *postlength = [NSString stringWithFormat:@"%d", [postData length]];
+            
+            //Create new instance of a Url Request.
+            NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+            
+            //set the values to request.
+            [request setURL:url];
+            [request setHTTPMethod:@"POST"];
+            [request setValue:postlength forHTTPHeaderField:@"Content-Length"];
+            [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+            [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+            [request setHTTPBody:postData];
+            
+            NSError *error = [[NSError alloc] init];
+            
+            NSHTTPURLResponse *response = nil;
+            
+            NSData *urlData=[NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+            
+            NSLog(@"Response code: %d", [response statusCode]);
+            
+            //verify the response code if and only if response code between 200 and 300 continue
+            //for example if a 404 response( page not found ) throw error.
+            if ([response statusCode] >=200 && [response statusCode] <300)
+            {
+                NSString *responseData = [[NSString alloc]initWithData:urlData encoding:NSUTF8StringEncoding];
+                
+                NSLog(@"Response ==> %@", responseData);
+                
+                SBJsonParser *jsonParser = [SBJsonParser new]; //create new parser
+                
+                NSDictionary *jsonData = (NSDictionary *) [jsonParser objectWithString:responseData error:nil];
+                
+                NSLog(@"JSON DATA: %@",jsonData); //create a dictionary for the json object.
+                
+                NSInteger success = [(NSNumber *) [jsonData objectForKey:@"success"] integerValue];
+                //response data should contain a 1 or 0 with the key "Success"
+                //1 meaning a successful match has been made. 0 preventing login
+                
+                //UITabBarController *tabctrl = [self.storyboard instantiateViewControllerWithIdentifier:@"TabController"];
+                
+                
+                if(success == 1)
+                {
+                    
+                    NSLog(@"Comment Uploaded");
+                    
+                    
+                } else {
+                    
+                    NSString *error_msg = (NSString *) [jsonData objectForKey:@"error_message"];
+                    
+                    [self alertStatus:error_msg :@"Login Failed!"];
+                }
+                
+            } else {
+                if (error)
+                
+                    NSLog(@"Error: %@", error);
+                
+                    [self alertStatus:@"Check Connection" :@"No Connection"];
+            }
+        }
+    }
+    @catch (NSException *e) {
+        
+        NSLog(@"Exception: %@", e);
+        
+        [self alertStatus:@"Login Failed." :@"Login Failed!"];
+    }
+
+    
+}
+
 @end

@@ -17,7 +17,7 @@
     AVAudioPlayer *player;
     NSURL *urlselected;
     NSString *userloginID;
-    
+    NSString *title;
 }
 
 @property (nonatomic, retain) NSURL *urlselected;
@@ -35,6 +35,7 @@
 @property (strong, nonatomic) IBOutlet UISlider *volumeslider;
 @property (strong, nonatomic) IBOutlet UIButton *shareButton;
 @property (nonatomic, retain) NSString *userloginID;
+@property (nonatomic, retain) NSString *Title;
 
 
 - (IBAction)PlayPressed:(id)sender;

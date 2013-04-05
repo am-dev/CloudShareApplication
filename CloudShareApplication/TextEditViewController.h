@@ -13,6 +13,8 @@
     UITableView *tableview;
     NSMutableArray *arrayoffiles;
     NSURL *urlselected;
+    NSString *selected;
+    NSString *filetitle;
 }
 
 @property (weak, nonatomic) IBOutlet UITextField *texttitle;
@@ -20,6 +22,8 @@
 @property (nonatomic, retain) NSMutableArray *arrayoffiles;
 @property (nonatomic, retain) UITableView *tableview;
 @property (nonatomic, retain) NSURL *urlselected;
+@property (nonatomic, retain) NSString *selected;
+@property (nonatomic, retain) NSString *filetitle;
 
 - (IBAction)savetextButton:(id)sender;
 

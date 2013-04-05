@@ -14,6 +14,11 @@
     NSString *userid;
 }
 
-@property ( nonatomic ) NSInteger *userid;
+@property ( nonatomic ) NSString *userid;
+
+
+-(IBAction)mp3playerselected:(id)sender;
+-(IBAction)imagepickerselected:(id)sender;
+-(IBAction)texteditorselected:(id)sender;
 
 @end

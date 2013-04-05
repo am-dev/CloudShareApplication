@@ -14,6 +14,8 @@
 #import "SBJson.h"
 #import "AudioViewController.h"
 #import "CreateNewUserViewController.h"
+#import "LiveFeedsViewController.h"
+#import "TabController.h"
 
 @interface LoginViewController ()
 
@@ -23,6 +25,7 @@
 
 @synthesize UsernameField;
 @synthesize PasswordField;
+@synthesize userid;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -97,29 +100,41 @@
             //response data should contain a 1 or 0 with the key "Success"
             //1 meaning a successful match has been made. 0 preventing login
             
-            UITabBarController *tabctrl = [self.storyboard instantiateViewControllerWithIdentifier:@"TabController"];
             
             
             if(success == 1)
             {
                 NSString *loginID = (NSString *)[jsonData objectForKey:@"userid"];
-                NSLog(@"User ID: %@", loginID);
-                [self presentViewController:tabctrl animated:YES completion:NULL];
                 
-            } else {
+                //NSLog(@"User ID: %@", loginID);
+                
+                self.userid = loginID;
+                
+                [self performSegueWithIdentifier:@"passingid" sender:self];
+                
+            }
+            else
+            {
                 
                 NSString *error_msg = (NSString *) [jsonData objectForKey:@"error_message"];
+                
                 [self alertStatus:error_msg :@"Login Failed!"];
             }
             
-        } else {
+        }
+        else
+        {
+            
             if (error) NSLog(@"Error: %@", error);
+            
             [self alertStatus:@"Check Connection" :@"No Connection"];
         }
     }
     }
-    @catch (NSException *e) {
+    @catch (NSException *e)
+    {
         NSLog(@"Exception: %@", e);
+        
         [self alertStatus:@"Login Failed." :@"Login Failed!"];
     }
 }
@@ -148,6 +163,21 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([segue.identifier isEqualToString:@"passingid"]) {
+        
+        Tab1LocalViewController* vc = [[Tab1LocalViewController alloc]init];
+        
+        UITabBarController *tbc = [segue destinationViewController];
+        
+        vc = (Tab1LocalViewController*)[[tbc customizableViewControllers] objectAtIndex:0];
+        
+        vc.userid = self.userid;
+        
+    }
 }
 
 @end

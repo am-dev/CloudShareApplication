@@ -34,6 +34,7 @@
 @synthesize volumeslider = _volumeslider;
 @synthesize shareButton = _shareButton;
 @synthesize userloginID = _userloginID;
+@synthesize Title;
 
 - (void)viewDidLoad
 {
@@ -201,6 +202,7 @@
     NSString *cellText = cell.textLabel.text;
     NSString *cellText2 = [cellText stringByDeletingPathExtension];
     
+    self.Title = cellText;
     
     NSString *filepath = [[NSBundle mainBundle] pathForResource:cellText2 ofType:@"mp3"];
     NSURL *fileURL = [[NSURL alloc] initFileURLWithPath:filepath];
@@ -210,12 +212,11 @@
     
     NSArray *metadata = [asset commonMetadata];
     
-    for ( AVMetadataItem* item in metadata ) {
+    for ( AVMetadataItem* item in metadata )
+    {
         NSString *key = [item commonKey];
         NSString *value = [item stringValue];
         NSLog(@"key = %@, value = %@", key, value);
-        
-        
     }
     
     NSError *error2;
@@ -229,9 +230,9 @@
 -(IBAction)sharebuttonselected:(id)sender
 {
     
-    //NSData *data2 = [[NSData alloc] initWithContentsOfURL:self.urlselected];
+    NSData *data2 = [[NSData alloc] initWithContentsOfURL:self.urlselected];
     //NSData *data = [[[NSData alloc] initWithData:data2] AES256EncryptedDataUsingKey:@"test" error:nil];
-    NSString *certPath = [[NSBundle mainBundle] pathForResource:@"public_key" ofType:@"der"];
+    /*NSString *certPath = [[NSBundle mainBundle] pathForResource:@"public_key" ofType:@"der"];
     SecCertificateRef myCertificate = nil;
     
     NSData *certificateData = [[NSData alloc] initWithContentsOfFile:certPath];
@@ -244,25 +245,29 @@
     
     NSLog(@"Public Key: %@", publicKey);
 
-    
-    
+    */
     
     NSLog(@"Url selected: %@", self.urlselected);
     
-    //[[self class] uploadfile:data];
+    NSString *string = self.Title;
+    
+    string = [string stringByAppendingFormat:@"%@.mp3", string];
+    
+    NSString *user = self.userloginID;
+    
+    [[self class] uploadfile:data2 :string :user];
 }
 
-+(NSString *)uploadfile:(NSData *)filedata
++(NSString *)uploadfile:(NSData *)filedata :(NSString *)filename :(NSString *)userid
 {
     NSInteger randomNumber = arc4random() % 16;
     NSString *randnumstring = [NSString stringWithFormat:@"%d", randomNumber];
-    NSString *comment = @"Test comment";
-    NSString *username = @"TestSong.mp3";
+
     
     @try{
         
-        NSString *post1 = [NSString stringWithFormat:@"username=%@&comment=%@", username, comment];
-        NSURL *serviceURL = [NSURL URLWithString:@"http://andysthesis.webhop.org/Php-services/uploadfileios.php"];
+        NSString *post1 = [NSString stringWithFormat:@"userid=%@&filename=%@", userid, filename];
+        NSURL *serviceURL = [NSURL URLWithString:@"http://andysthesis.webhop.org/Php-services/UploadMP3.php"];
         NSData *postData = [post1 dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES];
         NSString *postlength = [NSString stringWithFormat:@"%d", post1.length];
         
@@ -296,8 +301,8 @@
         NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@",boundary];
         [_request addValue:contentType forHTTPHeaderField: @"Content-Type"];
         [_body appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
-        [_body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"userfile\";filename=\"%@%@\"\r\n",randnumstring,username] dataUsingEncoding:NSUTF8StringEncoding]];
-        [_body appendData:[@"Content-Type: application/octet-stream\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+        [_body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"userfile\";filename=\"%@%@\"\r\n",randnumstring,filename] dataUsingEncoding:NSUTF8StringEncoding]];
+        [_body appendData:[@"Content-Type: mp3\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
         [_body appendData:[NSData dataWithData:filedata]];
         [_body appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
         // setting the body of the post to the reqeust
