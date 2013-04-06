@@ -50,6 +50,17 @@
     
     NSLog(@"File ID : %@", self.fileid);
     
+    self.webView = [[UIWebView alloc] initWithFrame:CGRectMake(0.0,0.0, self.view.bounds.size.width, 230)];
+    self.webView.delegate = self;
+    self.webView.hidden = NO;
+    self.webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    
+    //NSString *fullURL = @"http://www.google.ie";
+    //NSURL *url = [NSURL URLWithString:fullURL];
+    //NSURLRequest *requestObj = [NSURLRequest requestWithURL:url];
+    //[webview loadRequest:requestObj];
+    
+    [self.webView addSubview:self.webView];
     
     self.tableview = [[UITableView alloc] initWithFrame:CGRectMake(0.0, 230,
                                                                    self.view.bounds.size.width,
@@ -59,7 +70,7 @@
     self.tableview.delegate = self;
     self.tableview.autoresizingMask= UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.tableview.hidden = NO;
-    [self.view addSubview:self.tableview];
+    //[self.view addSubview:self.tableview];
 
     
     @try {

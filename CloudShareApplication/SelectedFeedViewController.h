@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface SelectedFeedViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
+@interface SelectedFeedViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UIWebViewDelegate>
 
 {
     UITableView *_tableView;
@@ -16,6 +16,8 @@
     NSString *_fileid;
     
     NSArray *_filecomments;
+    
+    UIWebView *webview;
 }
 
 
@@ -24,5 +26,7 @@
 @property (nonatomic, retain) NSArray *filecomments;
 
 @property (nonatomic, retain) UITableView *tableview;
+
+@property (nonatomic, retain) UIWebView *webView;
 
 @end
