@@ -23,6 +23,7 @@
 @synthesize arrayoffiles;
 @synthesize filedirectory;
 @synthesize filetitle;
+@synthesize userloginID;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {

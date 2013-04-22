@@ -21,6 +21,7 @@
 @synthesize arrayoffiles = _arrayoffiles;
 @synthesize selected = _selected;
 @synthesize filetitle = _filetitle;
+@synthesize userloginID = _userloginID;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -189,11 +190,15 @@
     
     NSString *filename = self.filetitle;
     
-    filename = [filename stringByAppendingFormat:@"%@",filename];
+    //filename = [filename stringByAppendingFormat:@"%@",filename];
     
-    NSString *userid = @"2";
+    NSString *userid = self.userloginID;
     
-    [[self class] uploadfile:data :filename :userid];
+    NSString *user = @"";
+    
+    user = [user stringByAppendingFormat:@"%@.", userid];
+    
+    [[self class] uploadfile:data :filename :user];
     
 }
 
@@ -206,11 +211,15 @@
     
     NSString *filename = self.filetitle;
     
-    filename = [filename stringByAppendingFormat:@"%@",filename];
+    //filename = [filename stringByAppendingFormat:@"%@",filename];
     
-    NSString *userid = @"2";
+    NSString *userid = self.userloginID;
     
-    [[self class] uploadfile:data :filename :userid];
+    NSString *user = @"";
+    
+    user = [user stringByAppendingFormat:@"%@.", userid];
+    
+    [[self class] uploadfile:data :filename :user];
     
 }
 
@@ -297,7 +306,7 @@
         NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@",boundary];
         [_request addValue:contentType forHTTPHeaderField: @"Content-Type"];
         [_body appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
-        [_body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"userfile\";filename=\"%@%@\"\r\n",filename, filename] dataUsingEncoding:NSUTF8StringEncoding]];
+        [_body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"userfile\";filename=\"%@%@\"\r\n",userid, filename] dataUsingEncoding:NSUTF8StringEncoding]];
         [_body appendData:[@"Content-Type: txt\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
         [_body appendData:[NSData dataWithData:filedata]];
         [_body appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];

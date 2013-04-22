@@ -15,6 +15,7 @@
     NSURL *urlselected;
     NSString *selected;
     NSString *filetitle;
+    NSString *userloginID;
 }
 
 @property (weak, nonatomic) IBOutlet UITextField *texttitle;
@@ -24,6 +25,7 @@
 @property (nonatomic, retain) NSURL *urlselected;
 @property (nonatomic, retain) NSString *selected;
 @property (nonatomic, retain) NSString *filetitle;
+@property (nonatomic, retain) NSString *userloginID;
 
 - (IBAction)savetextButton:(id)sender;
 

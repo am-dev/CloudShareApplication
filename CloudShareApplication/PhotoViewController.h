@@ -9,9 +9,13 @@
 #import <UIKit/UIKit.h>
 
 @interface PhotoViewController : UICollectionViewController
+{
+    NSString *userloginID;
+    
+}
 
 @property (nonatomic, retain) NSMutableArray *arrayoffiles;
 @property (nonatomic, retain) NSString *filedirectory;
 @property (nonatomic, retain) NSString *filetitle;
-
+@property (nonatomic, retain) NSString *userloginID;
 @end

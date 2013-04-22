@@ -52,12 +52,17 @@
 
 -(IBAction)imagepickerselected:(id)sender
 {
+    NSLog(@"id : %@", self.userid);
+    
+    [self performSegueWithIdentifier:@"sendingid3" sender:self];
     
 }
 
 -(IBAction)texteditorselected:(id)sender
 {
+    NSLog(@"id : %@", self.userid);
     
+    [self performSegueWithIdentifier:@"sendingid2" sender:self];
     
 }
 
@@ -65,6 +70,20 @@
 {
     if ([segue.identifier isEqualToString:@"sendingid"]) {
         AudioViewController *controller = segue.destinationViewController;
+        
+        controller.userloginID = self.userid;
+    }
+    
+    if ( [segue.identifier isEqualToString:@"sendingid2"])
+    {
+        TextEditViewController *controller = segue.destinationViewController;
+        
+        controller.userloginID = self.userid;
+    }
+    
+    if ( [segue.identifier isEqualToString:@"sendingid3"])
+    {
+        PhotoViewController *controller = segue.destinationViewController;
         
         controller.userloginID = self.userid;
     }
