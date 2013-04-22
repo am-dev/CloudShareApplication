@@ -126,9 +126,11 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:@"passingfilename"]) {
+        
         LargeImageViewController *controller = segue.destinationViewController;
         
         controller.filename = self.filetitle;
+        
         controller.filepath = self.filedirectory;
     }
 }
