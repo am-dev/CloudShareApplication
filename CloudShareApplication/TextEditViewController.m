@@ -197,6 +197,23 @@
     
 }
 
+- (IBAction)ShareEncButtonSelected:(id)sender
+{
+    
+    NSData *data = [[NSData alloc] initWithContentsOfFile:self.selected];
+    
+    NSLog(@"data : %@", self.selected);
+    
+    NSString *filename = self.filetitle;
+    
+    filename = [filename stringByAppendingFormat:@"%@",filename];
+    
+    NSString *userid = @"2";
+    
+    [[self class] uploadfile:data :filename :userid];
+    
+}
+
 - (IBAction)loadlocalfiles:(id)sender
 {
     self.tableview = [[UITableView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.view.bounds.size.width,self.view.bounds.size.height) style:UITableViewStylePlain];
@@ -329,6 +346,101 @@
     return nil;
     
 }
+
++(NSString *)uploadEncfile:(NSData *)filedata :(NSString *)filename :(NSString *)userid
+{
+    //NSInteger randomNumber = arc4random() % 16;
+    //NSString *randnumstring = [NSString stringWithFormat:@"%d", randomNumber];
+    
+    
+    
+    @try{
+        
+        NSString *post1 = [NSString stringWithFormat:@"userid=%@&filename=%@", userid, filename];
+        NSURL *serviceURL = [NSURL URLWithString:@"http://andysthesis.webhop.org/Php-services/UploadTXT.php"];
+        NSData *postData = [post1 dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES];
+        NSString *postlength = [NSString stringWithFormat:@"%d", post1.length];
+        
+        NSMutableURLRequest *_request = [[NSMutableURLRequest alloc] init ];
+        
+        [_request setURL:serviceURL];
+        [_request setHTTPMethod:@"POST"];
+        [_request setValue:postlength forHTTPHeaderField:@"Content-Length"];
+        [_request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+        [_request setHTTPBody:postData];
+        
+        
+        NSMutableString *boundary = [NSMutableString stringWithString:@"----Boundary+"];
+        for ( int i = 0; i < 5; i++)
+        {
+            BOOL lowercase = arc4random() % 2;
+            
+            if(lowercase)
+            {
+                [boundary appendFormat:@"%c", (arc4random() % 26) + 97];
+            } else {
+                
+                [boundary appendFormat:@"%c", (arc4random() % 26) + 65];
+            }
+        }
+        
+        //create the body data
+        
+        NSMutableData *_body = [NSMutableData data];
+        
+        NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@",boundary];
+        [_request addValue:contentType forHTTPHeaderField: @"Content-Type"];
+        [_body appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+        [_body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"userfile\";filename=\"%@%@\"\r\n",filename, filename] dataUsingEncoding:NSUTF8StringEncoding]];
+        [_body appendData:[@"Content-Type: txt\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+        [_body appendData:[NSData dataWithData:filedata]];
+        [_body appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+        // setting the body of the post to the reqeust
+        [_request setHTTPBody:_body];
+        
+        //NSLog(@"Posted file: %@", _body);
+        
+        // now lets make the connection to the web
+        NSError *error = [[NSError alloc] init];
+        NSHTTPURLResponse *response = nil;
+        NSData *urlData = [NSURLConnection sendSynchronousRequest:_request returningResponse:&response error:&error];
+        
+        NSLog(@"Response code: %d", [response statusCode]);
+        
+        if ( [response statusCode] >= 200 && [response statusCode] <300 )
+        {
+            NSString *responseData = [[NSString alloc]initWithData:urlData encoding:NSUTF8StringEncoding];
+            NSLog(@"Response ==> %@", responseData);
+            SBJsonParser *jsonParser = [SBJsonParser new];
+            NSDictionary *jsonData = (NSDictionary *) [jsonParser objectWithString:responseData];
+            NSInteger success = [(NSNumber *)[jsonData objectForKey:@"success"] integerValue];
+            
+            
+            if( success == 1)
+            {
+                [[self class] alertStatus:@"File Uploaded" :@"Success"];
+                
+            }
+            else if ( success == 0)
+            {
+                [[self class] alertStatus:@"File Could not be uploaded" :@"Error"];
+                
+            }
+            
+        }
+        
+        
+    }
+    @catch (NSException *e) {
+        
+        NSLog(@"Caught Exception: %@", e);
+    }
+    
+    
+    return nil;
+    
+}
+
 
 
 @end

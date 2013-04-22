@@ -36,6 +36,7 @@
 @property (strong, nonatomic) IBOutlet UIButton *shareButton;
 @property (nonatomic, retain) NSString *userloginID;
 @property (nonatomic, retain) NSString *Title;
+@property (strong, nonatomic) IBOutlet UIButton *shareEncButton;
 
 
 - (IBAction)PlayPressed:(id)sender;
@@ -45,6 +46,6 @@
 - (IBAction)openlistofmp3:(id)sender;
 - (IBAction)volumechanged:(id)sender;
 - (IBAction)sharebuttonselected:(id)sender;
-
+- (IBAction)shareEncbuttonselected:(id)sender;
 
 @end
