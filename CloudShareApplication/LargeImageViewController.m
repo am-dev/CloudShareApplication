@@ -18,6 +18,7 @@
 @synthesize filenamelabel = _filenamelabel;
 @synthesize filepath = _filepath;
 @synthesize filename = _filename;
+@synthesize userid;
 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -59,16 +60,28 @@
     // Dispose of any resources that can be recreated.
 }
 
+-(IBAction)uploadselected:(id)sender
+
+{
+    NSData *data = [[NSData alloc] initWithContentsOfFile:self.filepath];
+    
+    NSString *user = @"";
+    
+    user = [user stringByAppendingFormat:@"%@.", self.userid];
+    
+    [[self class] uploadfile:data :self.filename :user];
+    
+}
+
 +(NSString *)uploadfile:(NSData *)filedata :(NSString *)filename :(NSString *)userid
 {
-    NSInteger randomNumber = arc4random() % 16;
-    NSString *randnumstring = [NSString stringWithFormat:@"%d", randomNumber];
-    
+    //NSInteger randomNumber = arc4random() % 16;
+    //NSString *randnumstring = [NSString stringWithFormat:@"%d", randomNumber];
     
     @try{
         
         NSString *post1 = [NSString stringWithFormat:@"userid=%@&filename=%@", userid, filename];
-        NSURL *serviceURL = [NSURL URLWithString:@"http://andysthesis.webhop.org/Php-services/UploadMP3.php"];
+        NSURL *serviceURL = [NSURL URLWithString:@"http://andysthesis.webhop.org/Php-services/UploadIMAGE.php"];
         NSData *postData = [post1 dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES];
         NSString *postlength = [NSString stringWithFormat:@"%d", post1.length];
         
@@ -102,7 +115,7 @@
         NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@",boundary];
         [_request addValue:contentType forHTTPHeaderField: @"Content-Type"];
         [_body appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
-        [_body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"userfile\";filename=\"%@%@\"\r\n",randnumstring,filename] dataUsingEncoding:NSUTF8StringEncoding]];
+        [_body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"userfile\";filename=\"%@%@\"\r\n",userid,filename] dataUsingEncoding:NSUTF8StringEncoding]];
         [_body appendData:[@"Content-Type: jpg\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
         [_body appendData:[NSData dataWithData:filedata]];
         [_body appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];

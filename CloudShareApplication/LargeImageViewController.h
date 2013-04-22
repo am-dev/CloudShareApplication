@@ -14,6 +14,7 @@
     UIImageView *largeimage;
     UILabel *filenamelabel;
     NSString *filename;
+    NSString *userid;
 }
 
 
@@ -21,4 +22,8 @@
 @property (retain, nonatomic) IBOutlet UILabel *filenamelabel;
 @property (nonatomic, retain ) NSString *filepath;
 @property (nonatomic, retain ) NSString *filename;
+@property (nonatomic, retain ) NSString *userid;
+
+
+-(IBAction)uploadselected:(id)sender;
 @end

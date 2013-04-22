@@ -264,7 +264,9 @@
                         </subviews>
                     </view>
                     <tabBarItem key="tabBarItem" title="live feed" image="cloud-download.png" id="NT0-6K-89R"/>
-                    <navigationItem key="navigationItem" title="Live Feeds" id="MVp-jJ-3ji"/>
+                    <navigationItem key="navigationItem" title="Live Feeds" id="MVp-jJ-3ji">
+                        <barButtonItem key="backBarButtonItem" title=" " id="Rm6-mr-lUq"/>
+                    </navigationItem>
                     <connections>
                         <segue destination="mpY-T3-vp0" kind="push" identifier="passingfileID" id="Gkg-19-QUd"/>
                     </connections>
@@ -280,11 +282,21 @@
                     <view key="view" contentMode="scaleToFill" id="isA-FC-nen">
                         <rect key="frame" x="0.0" y="20" width="320" height="460"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <webView multipleTouchEnabled="YES" contentMode="scaleToFill" scalesPageToFit="YES" id="M9y-sG-bcT">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="232"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                            </webView>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="syM-BA-Tyj"/>
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="webView" destination="M9y-sG-bcT" id="9cP-gI-g4V"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QFG-Qn-CSk" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -389,7 +401,7 @@
             <objects>
                 <collectionViewController autoresizesArchivedViewToFullSize="NO" hidesBottomBarWhenPushed="YES" id="NOQ-Zr-Xa3" customClass="PhotoViewController" sceneMemberID="viewController">
                     <collectionView key="view" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" minimumZoomScale="-2" maximumZoomScale="5" dataMode="prototypes" id="LiQ-eZ-5dh">
-                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
+                        <rect key="frame" x="0.0" y="94" width="320" height="386"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="QV9-oF-xG1">
                             <size key="itemSize" width="152" height="211"/>
@@ -398,7 +410,7 @@
                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                         </collectionViewFlowLayout>
                         <imageView key="backgroundView" userInteractionEnabled="NO" contentMode="scaleToFill" image="bg_cork@2x.png" id="gjS-v1-e02">
-                            <rect key="frame" x="0.0" y="0.0" width="320" height="416"/>
+                            <rect key="frame" x="0.0" y="0.0" width="320" height="386"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         </imageView>
                         <cells>
@@ -431,7 +443,7 @@
                             <outlet property="delegate" destination="NOQ-Zr-Xa3" id="zal-XI-yFe"/>
                         </connections>
                     </collectionView>
-                    <navigationItem key="navigationItem" id="kez-Mh-U3L"/>
+                    <navigationItem key="navigationItem" prompt="images stored locally" id="kez-Mh-U3L"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <connections>
                         <segue destination="Mnn-rJ-KpJ" kind="push" identifier="passingfilename" id="13a-fi-aSz"/>
@@ -480,6 +492,9 @@
                                 <state key="highlighted">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <connections>
+                                    <action selector="uploadselected:" destination="Mnn-rJ-KpJ" eventType="touchUpInside" id="YHl-lg-Aj8"/>
+                                </connections>
                             </button>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="pushpin@2x.png" id="fId-0s-7bx">
                                 <rect key="frame" x="117" y="10" width="29" height="42"/>
@@ -799,6 +814,7 @@
         <class className="LargeImageViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/LargeImageViewController.h"/>
             <relationships>
+                <relationship kind="action" name="uploadselected:"/>
                 <relationship kind="outlet" name="filenamelabel" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="largeimage" candidateClass="UIImageView"/>
             </relationships>
@@ -830,6 +846,9 @@
         </class>
         <class className="SelectedFeedViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/SelectedFeedViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="webView" candidateClass="UIWebView"/>
+            </relationships>
         </class>
         <class className="Tab1LocalViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/Tab1LocalViewController.h"/>
@@ -864,9 +883,6 @@
         </class>
         <class className="UICollectionViewFlowLayout" superclassName="UICollectionViewLayout">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/UICollectionViewFlowLayout.h"/>
-        </class>
-        <class className="UICollectionViewLayout" superclassName="NSObject">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/UICollectionViewLayout.h"/>
         </class>
     </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

@@ -19,6 +19,7 @@
 @implementation SelectedFeedViewController
 @synthesize fileid = _fileid;
 @synthesize filecomments = _filecomments;
+@synthesize webView = _webView;
 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -48,6 +49,13 @@
 {
     [super viewDidLoad];
     
+    NSLog(@"File location URL: %@", self.fileid);
+    
+    NSString *fullURL = self.fileid;
+    NSURL *url = [NSURL URLWithString:fullURL];
+    NSURLRequest *requestObj = [NSURLRequest requestWithURL:url];
+    [_webView loadRequest:requestObj];
+/*
     NSLog(@"File ID : %@", self.fileid);
     
     self.webView = [[UIWebView alloc] initWithFrame:CGRectMake(0.0,0.0, self.view.bounds.size.width, 230)];
@@ -55,10 +63,10 @@
     self.webView.hidden = NO;
     self.webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     
-    //NSString *fullURL = @"http://www.google.ie";
-    //NSURL *url = [NSURL URLWithString:fullURL];
-    //NSURLRequest *requestObj = [NSURLRequest requestWithURL:url];
-    //[webview loadRequest:requestObj];
+    NSString *fullURL = self.fileid;
+    NSURL *url = [NSURL URLWithString:fullURL];
+    NSURLRequest *requestObj = [NSURLRequest requestWithURL:url];
+    [webview loadRequest:requestObj];
     
     [self.webView addSubview:self.webView];
     
@@ -105,7 +113,6 @@
                                                  }];
             
             [operation start];
-            */
             
             //Create string to post the username and password.
             NSString *post = [NSString stringWithFormat:@"fileID=%@", self.fileid];
@@ -172,9 +179,8 @@
         
         [self alertStatus:@"Connection Failed." :@"Con Failed!"];
     }
-  
-    
-	// Do any additional setup after loading the view.
+  */
+    // Do any additional setup after loading the view.
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath

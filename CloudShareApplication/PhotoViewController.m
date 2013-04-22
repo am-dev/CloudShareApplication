@@ -133,6 +133,8 @@
         controller.filename = self.filetitle;
         
         controller.filepath = self.filedirectory;
+        
+        controller.userid = self.userloginID;
     }
 }
 

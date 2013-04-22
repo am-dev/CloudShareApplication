@@ -27,6 +27,6 @@
 
 @property (nonatomic, retain) UITableView *tableview;
 
-@property (nonatomic, retain) UIWebView *webView;
+@property (weak, nonatomic) IBOutlet UIWebView *webView;
 
 @end

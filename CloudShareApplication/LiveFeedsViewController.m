@@ -145,7 +145,7 @@
 {
     NSDictionary *feeds = [self.livefeeds objectAtIndex:indexPath.row];
     
-    NSString *fileID = [feeds objectForKey:@"postid"];
+    NSString *fileID = [feeds objectForKey:@"fileURL"];
     
     NSLog(@"file ID : %@", fileID);
     
